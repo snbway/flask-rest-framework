@@ -10,7 +10,7 @@ class Schema(MSchema):
         super(Schema, self).__init__(*args, **kwargs)
 
     def load(self, data, *args, **kwargs):
-        instance = kwargs.get('instance', None)
+        instance = kwargs.pop('instance', None)
         self.instance = instance
         if 'PUT' == self.method:
             valid_fields = list(set(data).intersection(set(self.fields.keys())))
