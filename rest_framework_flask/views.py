@@ -16,6 +16,9 @@ class APIView(Resource):
     model = None
     versioning_class = QueryParameterVersioning
 
+    def get_schema_class(self, version):
+        return self.schema_class.get(version, self.schema_class.get("default"))
+
     def get_schema(self, **kwargs):
 
         assert len(self.schema_class) > 0, (
@@ -29,10 +32,7 @@ class APIView(Resource):
                 cls=self.__class__.__name__
             )
         )
-
-        version = self.request.version
-        schema = self.schema_class.get(version,
-                                       self.schema_class.get("default"))
+        schema = self.get_schema_class(self.request.version)
         if 'fields' in self.request.args:
             only = self.request.args['fields'].split(',')
             only.extend(kwargs.get('only', []))
@@ -140,7 +140,7 @@ class ListAPIView(APIView):
             result = self.get_paginated_response(ret.data, total)
         else:
             result = ret.data
-        return {'r': 0, 'data': result}
+        return result
 
     def get_query_set(self):
         raise NotImplementedError('subclasses of {cls} must provide a get_query_set() method'\
