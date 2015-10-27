@@ -136,7 +136,7 @@ class ListAPIView(APIView):
         # paginate queryset where result > self.page_size
         schema = self.get_schema(many=True)
         ret = schema.dump(queryset)
-        if total:
+        if total is not None:
             result = self.get_paginated_response(ret.data, total)
         else:
             result = ret.data
