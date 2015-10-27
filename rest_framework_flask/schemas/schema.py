@@ -6,9 +6,12 @@ class Schema(MSchema):
 
     def __init__(self, *args, **kwargs):
         self.method = kwargs.pop('method', None)
+        self.instance = None
         super(Schema, self).__init__(*args, **kwargs)
 
     def load(self, data, *args, **kwargs):
+        instance = kwargs.pop('instance', None)
+        self.instance = instance
         if 'PUT' == self.method:
             valid_fields = list(set(data).intersection(set(self.fields.keys())))
             self._clean_none_fields(valid_fields)
