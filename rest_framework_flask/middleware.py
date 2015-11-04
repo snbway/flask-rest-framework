@@ -33,6 +33,7 @@ def insert_args(f):
         request.is_weixin = is_weixin(request)
         request.query_params = get_query_params(request)
         g.scheme = request.environ['wsgi.url_scheme']
+        request.form
         args.insert(1, request)
         return f(*args, **kwargs)
     return _

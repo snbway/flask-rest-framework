@@ -126,6 +126,8 @@ class APIView(Resource):
 
 class ListAPIView(APIView):
 
+    max_page = 100
+
     def get(self, request, *args, **kwargs):
         self.parse_page_args()
         queryset, total = self.get_query_set()
@@ -150,7 +152,8 @@ class ListAPIView(APIView):
         page = int(self.request.args.get('page', 1))
         page_size = int(self.request.args.get('page_size', 10))
         self.page = page if page > 0 else 1
-        self.page_size = page_size if page_size in range(1, 100) else api_setting.PAGE_SIZE
+        max_page = self.max_page_size or 100
+        self.page_size = page_size if page_size in range(1, max_page) else api_setting.PAGE_SIZE
 
     def get_paginated_response(self, queryset, total):
         ret = dict(page=self.page, items=queryset, total=total)
