@@ -126,7 +126,9 @@ class APIView(Resource):
 
 class ListAPIView(APIView):
 
-    max_page = 100
+    def __init__(self, *args, **kwargs):
+        self.max_page_size = 100
+        super(ListAPIView, self).__init__(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         self.parse_page_args()
