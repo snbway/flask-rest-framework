@@ -3,6 +3,7 @@
 from functools import wraps
 from flask import request, g
 from utils import get_real_ip
+import urllib
 
 
 def is_weixin(request):
@@ -17,7 +18,7 @@ def get_query_params(request):
     for key in query_str:
         ql = key.split("=")
         if len(ql) > 1:
-            ret[ql[0]] = ql[1]
+            ret[ql[0]] = urllib.unquote(ql[1]).decode('utf8')
         elif ql:
             ret[ql[0]] = None
     return ret
