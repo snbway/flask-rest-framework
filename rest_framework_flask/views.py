@@ -15,6 +15,7 @@ class APIView(Resource):
     schema_class = {}
     model = None
     versioning_class = QueryParameterVersioning
+    fields = ()
 
     def get_schema_class(self, version):
         return self.schema_class.get(version, self.schema_class.get("default"))
@@ -33,10 +34,16 @@ class APIView(Resource):
             )
         )
         schema = self.get_schema_class(self.request.version)
+        only = []
         if 'fields' in self.request.args:
             only = self.request.args['fields'].split(',')
             only.extend(kwargs.get('only', []))
-            only = list(set(only).intersection(set(schema.fields.keys())))
+            only = list(set(only).intersection(set(schema().fields.keys())))
+
+        if self.fields:
+            only.extend(self.fields)
+            only = list(set(only).intersection(set(schema().fields.keys())))
+        if only:
             kwargs['only'] = only
         kwargs['method'] = self.request.method
         return schema(**kwargs)
