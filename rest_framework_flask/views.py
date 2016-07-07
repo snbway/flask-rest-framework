@@ -179,6 +179,15 @@ class ListAPIView(APIView):
     def paginate_queryset(self, total):
         return total > self.page_size
 
+    def post(self, request, *args, **kwargs):
+        schema = self.get_schema()
+        data, error = schema.load(request.form)
+        if error:
+            return error, 400
+        ad = schema.create(creator_id=request.user.id, **data)
+        ret = schema.dump(ad)
+        return ret.data
+
 
 class DetailAPI(APIView):
 
