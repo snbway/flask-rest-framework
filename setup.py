@@ -4,7 +4,6 @@ from setuptools import setup
 setup(name='flaskrestframework',
       version='0.1.0',
       description='Web APIs for Flask, made easy.',
-      url='quxl.snbway.com',
       author='quxl',
       author_email='quxl@snbway.com',
       license='MIT',
