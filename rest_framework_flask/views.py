@@ -129,7 +129,7 @@ class APIView(Resource):
         self.request = args[0]
 
         try:
-            if self.request.method.uper() not in self.allow_method:
+            if self.request.method.upper() not in self.allow_method:
                 raise exceptions.MethodNotAllowed()
             request = args[0]
             self.initial(request, *args, **kwargs)
