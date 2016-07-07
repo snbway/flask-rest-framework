@@ -199,7 +199,7 @@ class DetailAPI(APIView):
         inst = self.get_object()
         schema = self.get_schema()
         self.check_object_permissions(request, inst)
-        return schema.dum(inst).data
+        return schema.dump(inst).data
 
     def put(self, request, *args, **kwargs):
         inst = self.get_object()
