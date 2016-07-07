@@ -1,10 +1,12 @@
 # encoding=utf-8
 from flask import Response
 from flask.ext.restful import Resource
+
 import exceptions
 from exceptions import APIException, NotAuthenticated, AuthenticationFailed
 from middleware import insert_args
 import status
+from utils import get_object_or_404
 from versioning import QueryParameterVersioning
 import api_setting
 
@@ -16,6 +18,9 @@ class APIView(Resource):
     model = None
     versioning_class = QueryParameterVersioning
     fields = ()
+
+    lookup_key = 'pk'
+    allow_method = ('GET', 'PUT', 'DELETE', 'POST')
 
     def get_schema_class(self, version):
         return self.schema_class.get(version, self.schema_class.get("default"))
@@ -122,7 +127,10 @@ class APIView(Resource):
         self.kwargs = kwargs
         self.args = args
         self.request = args[0]
+
         try:
+            if self.request.method.uper() not in self.allow_method:
+                raise exceptions.MethodNotAllowed()
             request = args[0]
             self.initial(request, *args, **kwargs)
             response = super(APIView, self).dispatch_request(*args, **kwargs)
@@ -170,3 +178,33 @@ class ListAPIView(APIView):
 
     def paginate_queryset(self, total):
         return total > self.page_size
+
+
+class DetailAPI(APIView):
+
+    def get_object(self):
+        schema = self.get_schema()
+        return get_object_or_404(schema.Meta.model, self.kwargs.get(self.lookup_key))
+
+    def get(self, request, *args, **kwargs):
+        inst = self.get_object()
+        schema = self.get_schema()
+        self.check_object_permissions(request, inst)
+        return schema.dum(inst).data
+
+    def put(self, request, *args, **kwargs):
+        inst = self.get_object()
+        schema = self.get_schema()
+        self.check_object_permissions(request, inst)
+        data, error = schema.load(request.form)
+        if error:
+            return error, 400
+        inst = schema.update(instance=inst, **data)
+        return schema.dump(inst).data
+
+    def delete(self, request, *args, **kwargs):
+        inst = self.get_object()
+        self.check_object_permissions(request, inst)
+        if inst.delete():
+            return '', 204
+        return '删除失败', 500

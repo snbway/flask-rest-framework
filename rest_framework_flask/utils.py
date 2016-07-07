@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+from exceptions import NotFound
 
 
 def get_real_ip(env):
@@ -10,3 +11,10 @@ def get_real_ip(env):
         if ip:
             env['REMOTE_ADDR'] = ip
     return ip
+
+
+def get_object_or_404(cls, pk):
+    instance = cls.get(pk)
+    if not instance:
+        raise NotFound(detail='%s %s: NOT FOUND' % (cls.__name__, pk))
+    return instance
