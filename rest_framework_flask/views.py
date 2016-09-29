@@ -100,7 +100,7 @@ class APIView(Resource):
     def handle_exception(self, exc):
         if isinstance(exc, (NotAuthenticated, AuthenticationFailed)):
             exc.status_code = status.HTTP_401_UNAUTHORIZED
-        return Response(response=exc.default_detail, status=exc.status_code)
+        return Response(response=exc.detail, status=exc.status_code)
 
     def initial(self, request, *args, **kwargs):
         """

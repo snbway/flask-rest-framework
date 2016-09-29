@@ -2,7 +2,7 @@
 from setuptools import setup
 
 setup(name='flaskrestframework',
-      version='0.1.3',
+      version='0.1.4',
       description='Web APIs for Flask, made easy.',
       author='quxl',
       author_email='quxl@snbway.com',
