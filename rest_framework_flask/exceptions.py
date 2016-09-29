@@ -39,3 +39,8 @@ class AuthenticationFailed(APIException):
 class NotFound(APIException):
     status_code = status.HTTP_404_NOT_FOUND
     default_detail = 'Not found.'
+
+
+class MethodNotAllowed(APIException):
+    status = status.HTTP_405_METHOD_NOT_ALLOWED
+    default_detail = 'Method not allowed.'
